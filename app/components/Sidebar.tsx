@@ -2,27 +2,21 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+const reviewSubItems = [
+  { id: 'christmas-card', name: 'Christmas Card', href: '/review/christmas-card', icon: '🎄', special: true },
+  { id: 'child-greeting-photo', name: 'Child Greeting Photo', href: '/review/child-greeting-photo', icon: '📸' },
+  { id: 'child-greeting-video', name: 'Child Greeting Video', href: '/review/child-greeting-video', icon: '🎬' },
+  { id: 'child-intro-message', name: 'Child Intro Message', href: '/review/child-intro-message', icon: '💬' },
+  { id: 'child-intro-video', name: 'Child Intro Video', href: '/review/child-intro-video', icon: '🎥' },
+  { id: 'child-update-message', name: 'Child Update Message', href: '/review/child-update-message', icon: '📝' },
+  { id: 'child-reply-message', name: 'Child Reply Message', href: '/review/child-reply-message', icon: '💌' },
+];
 
 const navItems = [
   {
-    name: 'Dashboard',
-    href: '/home',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ),
-  },
-  {
-    name: 'Reviews',
-    href: '/review',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-      </svg>
-    ),
-  },
-  {
+    id: 'nav-analytics',
     name: 'Analytics',
     href: '/analytics',
     icon: (
@@ -32,6 +26,7 @@ const navItems = [
     ),
   },
   {
+    id: 'nav-settings',
     name: 'Settings',
     href: '/settings',
     icon: (
@@ -45,13 +40,23 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [reviewsExpanded, setReviewsExpanded] = useState(false);
+
+  // Auto-expand reviews menu if we're on a review page
+  useEffect(() => {
+    if (pathname.startsWith('/review')) {
+      setReviewsExpanded(true);
+    }
+  }, [pathname]);
+
+  const isReviewActive = pathname.startsWith('/review');
 
   return (
-    <aside className="fixed left-0 top-16 bottom-0 w-64 bg-sidebar-bg border-r border-border overflow-y-auto">
-      <div className="p-4">
+    <aside id="sidebar" className="fixed left-0 top-16 bottom-0 w-64 bg-sidebar-bg border-r border-border overflow-y-auto">
+      <div id="sidebar-content" className="p-4">
         {/* Quick Actions */}
-        <div className="mb-6">
-          <button className="w-full btn-primary text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+        <div id="sidebar-quick-actions" className="mb-6">
+          <button id="sidebar-new-review-btn" className="w-full bg-primary hover:bg-primary-dark text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -60,15 +65,99 @@ export default function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="space-y-1">
-          <p className="px-3 text-xs font-semibold text-muted uppercase tracking-wider mb-3">
+        <nav id="sidebar-nav" className="space-y-1">
+          <p id="sidebar-nav-label" className="px-3 text-xs font-semibold text-muted uppercase tracking-wider mb-3">
             Navigation
           </p>
+          
+          {/* Dashboard */}
+          <Link
+            id="sidebar-nav-dashboard"
+            href="/home"
+            className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+              pathname === '/home'
+                ? 'bg-primary/10 text-primary font-medium active'
+                : 'text-muted hover:bg-foreground/5 hover:text-foreground'
+            }`}
+          >
+            <span id="sidebar-nav-dashboard-icon" className={pathname === '/home' ? 'text-primary' : ''}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            </span>
+            Dashboard
+          </Link>
+
+          {/* Reviews - Expandable */}
+          <div id="sidebar-reviews-section">
+            <button
+              id="sidebar-reviews-toggle"
+              onClick={() => setReviewsExpanded(!reviewsExpanded)}
+              className={`w-full sidebar-link flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                isReviewActive
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted hover:bg-foreground/5 hover:text-foreground'
+              }`}
+            >
+              <div id="sidebar-reviews-label" className="flex items-center gap-3">
+                <span id="sidebar-reviews-icon" className={isReviewActive ? 'text-primary' : ''}>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                </span>
+                Reviews
+              </div>
+              <svg 
+                id="sidebar-reviews-chevron"
+                className={`w-4 h-4 transition-transform duration-200 ${reviewsExpanded ? 'rotate-180' : ''}`} 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Expandable Sub-items */}
+            <div id="sidebar-reviews-submenu" className={`overflow-hidden ${
+              reviewsExpanded ? 'max-h-[500px]' : 'max-h-0'
+            }`}>
+              <div id="sidebar-reviews-list" className="mt-1 ml-4 pl-4 border-l-2 border-border space-y-1">
+                {reviewSubItems.map((item) => {
+                  const isSubActive = pathname === item.href;
+                  const isChristmasCard = item.special;
+                  
+                  return (
+                    <Link
+                      key={item.id}
+                      id={`sidebar-review-${item.id}`}
+                      href={item.href}
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm ${
+                        isChristmasCard
+                          ? pathname === '/review/christmas-card'
+                            ? 'bg-primary/10 text-primary font-medium'
+                            : 'text-muted hover:bg-foreground/5 hover:text-foreground'
+                          : isSubActive
+                            ? 'bg-primary/10 text-primary font-medium'
+                            : 'text-muted hover:bg-foreground/5 hover:text-foreground'
+                      }`}
+                    >
+                      <span id={`sidebar-review-${item.id}-icon`} className="text-base">{item.icon}</span>
+                      <span id={`sidebar-review-${item.id}-text`} className="truncate">{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Other Nav Items */}
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
-                key={item.name}
+                key={item.id}
+                id={item.id}
                 href={item.href}
                 className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                   isActive
@@ -76,52 +165,13 @@ export default function Sidebar() {
                     : 'text-muted hover:bg-foreground/5 hover:text-foreground'
                 }`}
               >
-                <span className={isActive ? 'text-primary' : ''}>{item.icon}</span>
+                <span id={`${item.id}-icon`} className={isActive ? 'text-primary' : ''}>{item.icon}</span>
                 {item.name}
               </Link>
             );
           })}
         </nav>
 
-        {/* Stats Card */}
-        <div className="mt-8 p-4 rounded-2xl bg-gradient-to-br from-secondary/10 to-primary/10 border border-border">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-secondary/20 flex items-center justify-center">
-              <svg className="w-5 h-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">Quick Stats</p>
-              <p className="text-xs text-muted">This week</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="text-center p-2 rounded-lg bg-background/50">
-              <p className="text-lg font-bold text-primary">24</p>
-              <p className="text-xs text-muted">Reviews</p>
-            </div>
-            <div className="text-center p-2 rounded-lg bg-background/50">
-              <p className="text-lg font-bold text-secondary">89%</p>
-              <p className="text-xs text-muted">Accuracy</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Help Section */}
-        <div className="mt-6 p-4 rounded-2xl border border-border bg-card-bg">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">Need Help?</p>
-              <p className="text-xs text-muted mt-1">Check our documentation or contact support.</p>
-            </div>
-          </div>
-        </div>
       </div>
     </aside>
   );
