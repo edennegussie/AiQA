@@ -15,8 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AiQA - AI-Powered Quality Assurance",
-  description: "Streamline your code reviews with intelligent insights and automated quality checks",
+  title: "AiQA",
+  description: "AI-powered QA system for reviewing media such as photos, videos, documents, messages; especially suitable for an org.",
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

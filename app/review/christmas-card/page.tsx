@@ -65,7 +65,7 @@ export default function ChristmasCardPage() {
 
           {/* Header */}
           <div id="christmas-card-header" className="mb-8">
-            <h1 id="christmas-card-title" className="text-3xl font-bold text-foreground mb-2">Christmas Card</h1>
+            <h1 id="christmas-card-title" className="text-3xl font-bold text-primary mb-2">Christmas Card</h1>
             <p id="christmas-card-subtitle" className="text-muted">Review and manage Christmas card submissions</p>
           </div>
 
